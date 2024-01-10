@@ -1,6 +1,6 @@
 {
   "name": "@pinoyfreecoder/detect-breakpoint",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "this will detech the web browsers breakpoints",
   "main": "index.js",
   "scripts": {
