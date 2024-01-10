@@ -33,7 +33,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    needs: build # Ensure that the 'build' job completes before starting the 'publish' job
+    needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -47,7 +47,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Publish to npm
-        run: npm publish
+      - name: Bump Version
+        run: npm version patch
+
+      - name: Commit and Push Version
+        run: |
+          git config user.email "you@example.com"
+          git config user.name "Your Name"
+          git add package.json
+          git commit -m "Bump version"
+          git push
+
+      - name: Publish to NPM
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
