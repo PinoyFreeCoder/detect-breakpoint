@@ -2,8 +2,7 @@ name: Publish Workflow CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
@@ -11,33 +10,44 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - name: Use Node.js ${{ matrix.node-version }} and clone repo
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: https://registry.npmjs.org
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install dependencies
+        run: |
+          npm install
+          npm ci
 
-      - name: Run Tests
+      - name: Build
+        run: npm run build
+
+      - name: Run tests
         run: npm run test
 
-      - name: Bump Version and Publish
-        run: |
-          # Bump the patch version
-          npm version patch
+  publish:
+    runs-on: ubuntu-latest
+    needs: build # Ensure that the 'build' job completes before starting the 'publish' job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-          # Get the new version
-          NEW_VERSION=$(node -p -e "require('./package.json').version")
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          registry-url: https://registry.npmjs.org
 
-          # Publish the new version
-          npm publish --access public
+      - name: Install dependencies
+        run: npm ci
 
-          # Print the published version
-          echo "Published version: $NEW_VERSION"
+      - name: Publish to npm
+        run: npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
