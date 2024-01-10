@@ -1,0 +1,27 @@
+name: Publish Workflow CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use nodeJS ${{ matrix.node-version }} and clone repo
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: https://registry.npmjs.org
+      - run: npm install
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test
+      - run: npm publish --access public
+        working-directory: .
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}

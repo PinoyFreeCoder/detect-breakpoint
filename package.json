@@ -12,6 +12,10 @@
     "breakpoint",
     "web"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PinoyFreeCoder/detect-breakpoint"
+  },
   "author": "pinoyfreecoder",
   "license": "ISC",
   "devDependencies": {
