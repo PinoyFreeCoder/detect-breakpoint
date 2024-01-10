@@ -2,7 +2,8 @@ name: Publish Workflow CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build:
@@ -52,8 +53,8 @@ jobs:
 
       - name: Commit and Push Version
         run: |
-          git config user.email "pinoyfreecoder@gmail.com"
-          git config user.name "PinoyFreeCoder"
+          git config --local user.email "pinoyfreecoder@gmail.com"
+          git config --local user.name "PinoyFreeCoder"
           git add package.json
           git commit -m "Bump version"
           git push
