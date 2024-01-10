@@ -22,7 +22,6 @@ jobs:
       - run: npm run build
       - run: npm run test
       - run: npm publish --access public
-      - run: npm version patch
         working-directory: .
         env:
           NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
