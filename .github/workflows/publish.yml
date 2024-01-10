@@ -2,26 +2,42 @@ name: Publish Workflow CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [14.x] # Adjust the Node.js version as needed
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Use nodeJS ${{ matrix.node-version }} and clone repo
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          registry-url: https://registry.npmjs.org
-      - run: npm install
-      - run: npm ci
-      - run: npm run build
-      - run: npm run test
-      - run: npm publish --access public
-        working-directory: .
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm run test
+
+      - name: Bump Version and Publish
+        run: |
+          # Bump the patch version
+          npm version patch
+
+          # Get the new version
+          NEW_VERSION=$(node -p -e "require('./package.json').version")
+
+          # Publish the new version
+          npm publish --access public
+
+          # Print the published version
+          echo "Published version: $NEW_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
