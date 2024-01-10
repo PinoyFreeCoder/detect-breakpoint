@@ -39,5 +39,4 @@ class ResponsiveBreakpoints {
   }
 }
 
-// Export the ResponsiveBreakpoints class
 module.exports = ResponsiveBreakpoints;
